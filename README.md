@@ -1,6 +1,6 @@
 # Nagios BIRD plugins
 
-This repository contains Nagios plugins for monitoring the
+This repository contains [Nagios] plugins for monitoring the
 [BIRD routing daemon]. The plugins are written in Perl.
 
 ## bird.ctl
@@ -38,3 +38,6 @@ If the BIRD control socket is not in the default location `/var/run/bird.ctl`,
 then an alternate location can be specified with option `-s`.
 
 Option `-p` is required, and specifies the protocol name to look for.
+
+ [Nagios]: http://www.nagios.org/
+ [BIRD routing daemon]: http://bird.network.cz/
