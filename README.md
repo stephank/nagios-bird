@@ -1,29 +1,17 @@
 # Nagios BIRD plugins
 
 This repository contains [Nagios] plugins for monitoring the
-[BIRD routing daemon]. The plugins are written in Perl.
+[BIRD routing daemon].
 
-## bird.ctl
+The plugins are written in Perl, and depend on `Nagios::Plugin`. The included
+`birdctl.pm` module is also required and needs to be installed somewhere in
+the Perl include path.
 
-This is a simple Perl module for talking to BIRD's control socket. Briefly,
-you may use it as follows:
-
-    use birdctl;
-    my $bird = new birdctl(
-      socket => $socket_path,
-      restrict => 1,
-    );
-    my $final_result_line = $bird->cmd("show route count");
-    my @result_lines = $bird->long_cmd("show route protocol kernel");
-
-The return values of `cmd` and `long_cmd` are the lines verbatim as received
-from BIRD, including status codes.
-
-## check_proto_bird
+## check_bird_proto
 
 This plugin monitors a protocol in the BIRD configuration.
 
-    Usage: %s -p <protocol> [ -r <table> -z -s <socket> ]
+    Usage: check_bird_proto -p <protocol> [ -r <table> -z -s <socket> ]
 
  * BIRD must be running, or CRITICAL is reported.
  * The protocol must be up, or CRITICAL is reported.
@@ -41,3 +29,19 @@ Option `-p` is required, and specifies the protocol name to look for.
 
  [Nagios]: http://www.nagios.org/
  [BIRD routing daemon]: http://bird.network.cz/
+
+## bird.ctl
+
+This is a simple Perl module for talking to BIRD's control socket. Briefly,
+you may use it as follows:
+
+    use birdctl;
+    my $bird = new birdctl(
+      socket => $socket_path,
+      restrict => 1,
+    );
+    my $final_result_line = $bird->cmd("show route count");
+    my @result_lines = $bird->long_cmd("show route protocol kernel");
+
+The return values of `cmd` and `long_cmd` are the lines verbatim as received
+from BIRD, including status codes.
