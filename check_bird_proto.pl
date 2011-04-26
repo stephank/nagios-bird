@@ -48,7 +48,14 @@ eval q{
   }
 
   # Check status
-  $status[3] eq "up" or $np->nagios_exit(CRITICAL, "Protocol $status[0] is $status[3] - info: $status[5]");
+  if ($status[3] ne "up") {
+    if ($status[5]) {
+      $np->nagios_exit(CRITICAL, "Protocol $status[0] is $status[3] - info: $status[5]");
+    }
+    else {
+      $np->nagios_exit(CRITICAL, "Protocol $status[0] is $status[3] - info: Protocol Down");
+    }
+  }
 
   # Inspect routes imported from this protocol
   $_ = $bird->cmd("show route table " . $np->opts->table . " protocol " . $np->opts->protocol . " count");
