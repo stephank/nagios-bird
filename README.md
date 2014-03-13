@@ -45,3 +45,7 @@ you may use it as follows:
 
 The return values of `cmd` and `long_cmd` are the lines verbatim as received
 from BIRD, including status codes.
+
+## License
+
+[MIT License](http://en.wikipedia.org/wiki/MIT_License)
