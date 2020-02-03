@@ -25,7 +25,9 @@ sub new {
   ) or croak "Connection failed: $!";
 
   defined($_ = <$socket>) or croak "While reading 'hello': $!";
-  /^0001 BIRD 1\.[\d\.]+ ready\.$/ or croak "Bad 'hello' received";
+  /^0001 BIRD 1\.[\d\.]+ ready\.$/ or
+  /^0001 BIRD 2\.[\d\.]+ ready\.$/ or croak "Bad 'hello' received";
+
 
   my $self = {
     _socket => $socket,
