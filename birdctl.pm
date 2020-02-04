@@ -8,6 +8,7 @@ use warnings;
 use Carp;
 use Params::Validate qw(:all);
 use IO::Socket::UNIX;
+my $birdversion;
 
 # Constructor.
 sub new {
@@ -25,10 +26,13 @@ sub new {
   ) or croak "Connection failed: $!";
 
   defined($_ = <$socket>) or croak "While reading 'hello': $!";
-  /^0001 BIRD 1\.[\d\.]+ ready\.$/ or
-  /^0001 BIRD 2\.[\d\.]+ ready\.$/ or croak "Bad 'hello' received";
 
-
+  /^0001 BIRD ([1-2])\.[\d\.]+ ready\.$/ or croak "Bad 'hello' received";
+  if ($1 eq "1") {
+	$birdversion = 1;
+  } elsif ($1 eq "2") {
+	$birdversion = 2;
+  }
   my $self = {
     _socket => $socket,
   };
@@ -61,10 +65,27 @@ sub long_cmd {
 };
 
 # Return just the finishing line received in response to the given command.
+# the last line is "0000" as in bird2 we trash the line and pop the next.
+# Also checking if the line is a succesful code starting with 0x
 sub cmd {
   my $self = shift(@_);
   my @result = $self->long_cmd(@_);
-  return pop(@result);
+  my $lastline;
+  if ( @result eq 1 ) {
+	$lastline = pop(@result);
+	if ( $lastline  =~ /^0./ ) {
+		return $lastline;
+	} else {
+		croak "Command not successful ($lastline)";
+	}
+  } else {
+	$lastline = pop(@result);
+	if ( $lastline  =~ /^0./ ) {
+		return pop(@result);
+	} else {
+		croak "Command not successful ($lastline)";
+	}
+  }
 };
 
 1;

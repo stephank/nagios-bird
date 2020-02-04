@@ -58,13 +58,14 @@ eval q{
   }
 
   # Inspect routes imported from this protocol
-  $_ = $bird->cmd("show route table " . $np->opts->table . " protocol " . $np->opts->protocol . " count");
-  /^0014 (\d+) of \d+ routes for \d+ networks$/ or $np->nagios_exit(CRITICAL, $_);
+  my $search_string = '^[0-1][0-9][0-9][0-9][- ]?(\d+) of (\d+) routes for \d+ networks[ in table '.$np->opts->table.']*';
+  my $route_count = $bird->cmd("show route table " . $np->opts->table . " protocol " . $np->opts->protocol . " count");
+  $route_count =~ $search_string or $np->nagios_exit(CRITICAL, $_);
 
   # Final status
   $np->nagios_exit(
     $np->opts->zero && $1 eq "0" ? CRITICAL : OK,
-    "Protocol $status[0] is $status[3] - $1 routes imported."
+    "Protocol $status[0] is $status[3] - $1 routes imported ($2 total)."
   );
 };
 if ($@) { $np->nagios_exit(CRITICAL, $@); }
